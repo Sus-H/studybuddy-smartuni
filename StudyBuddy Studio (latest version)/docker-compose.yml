@@ -32,7 +32,7 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.quorra1.ita.chalmers.se`)"
       - "traefik.http.routers.dashboard.entrypoints=web"
       - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
 
@@ -56,11 +56,11 @@ services:
     labels:
       - "traefik.enable=true"
       # HTTP
-      - "traefik.http.routers.studybuddy.rule=Host(`${DOMAIN:-localhost}`) || Host(`studybuddy.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.studybuddy.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
       - "traefik.http.routers.studybuddy.entrypoints=web"
       - "traefik.http.services.studybuddy.loadbalancer.server.port=8501"
       # HTTPS (uncomment for SSL)
-      # - "traefik.http.routers.studybuddy-secure.rule=Host(`${DOMAIN:-localhost}`) || Host(`studybuddy.${DOMAIN:-localhost}`)"
+      # - "traefik.http.routers.studybuddy-secure.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
       # - "traefik.http.routers.studybuddy-secure.entrypoints=websecure"
       # - "traefik.http.routers.studybuddy-secure.tls.certresolver=letsencrypt"
       # Redirect HTTP to HTTPS (uncomment for SSL)
@@ -90,7 +90,7 @@ services:
       - neo4j_plugins:/plugins
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.neo4j.rule=Host(`neo4j.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.neo4j.rule=Host(`neo4j.quorra1.ita.chalmers.se`)"
       - "traefik.http.routers.neo4j.entrypoints=web"
       - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
     networks:
