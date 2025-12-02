@@ -1,0 +1,108 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      # API and Dashboard
+      - --api.dashboard=true
+      - --api.insecure=true
+      # Docker provider
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik
+      # Entrypoints
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # Let's Encrypt (uncomment for SSL)
+      # - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      # - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
+      # - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # Logging
+      - --log.level=INFO
+      - --accesslog=true
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"  # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.dashboard.entrypoints=web"
+      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+
+  studybuddy:
+    build: .
+    container_name: studybuddy-app
+    restart: unless-stopped
+    environment:
+      - STREAMLIT_SERVER_HEADLESS=true
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+      - STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false
+      # Neo4j connection
+      - NEO4J_URI=${NEO4J_URI:-bolt://neo4j:7687}
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-your-secure-password}
+      # Optional: OpenAI/LLM settings
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+    labels:
+      - "traefik.enable=true"
+      # HTTP
+      - "traefik.http.routers.studybuddy.rule=Host(`${DOMAIN:-localhost}`) || Host(`studybuddy.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.studybuddy.entrypoints=web"
+      - "traefik.http.services.studybuddy.loadbalancer.server.port=8501"
+      # HTTPS (uncomment for SSL)
+      # - "traefik.http.routers.studybuddy-secure.rule=Host(`${DOMAIN:-localhost}`) || Host(`studybuddy.${DOMAIN:-localhost}`)"
+      # - "traefik.http.routers.studybuddy-secure.entrypoints=websecure"
+      # - "traefik.http.routers.studybuddy-secure.tls.certresolver=letsencrypt"
+      # Redirect HTTP to HTTPS (uncomment for SSL)
+      # - "traefik.http.routers.studybuddy.middlewares=redirect-to-https"
+      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+    networks:
+      - traefik
+    depends_on:
+      - neo4j
+
+  neo4j:
+    image: neo4j:5.15-community
+    container_name: neo4j-db
+    restart: unless-stopped
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-your-secure-password}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=apoc.*
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/var/lib/neo4j/import
+      - neo4j_plugins:/plugins
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.neo4j.rule=Host(`neo4j.${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.neo4j.entrypoints=web"
+      - "traefik.http.services.neo4j.loadbalancer.server.port=7474"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    name: traefik
+    external: false
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:
+  neo4j_plugins:
