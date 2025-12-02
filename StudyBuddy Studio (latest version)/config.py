@@ -5,8 +5,8 @@ import os
 from dotenv import load_dotenv
 
 # Ladda miljövariabler från .env
-#load_dotenv()
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env")) # Om du lagrar .env en nivå upp, annars välj ovanstående rad
+load_dotenv()  # Load from current directory
+# load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", ".env")) # If stored one level up
 
 # Neo4j konfiguration
 NEO4J_URI = os.getenv("NEO4J_URI")
