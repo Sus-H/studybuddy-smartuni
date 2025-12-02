@@ -63,11 +63,11 @@ services:
     labels:
       - "traefik.enable=true"
       # HTTP
-      - "traefik.http.routers.studybuddy.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
+      - "traefik.http.routers.studybuddy.rule=Host(`quorra1.ita.chalmers.se`)"
       - "traefik.http.routers.studybuddy.entrypoints=web"
       - "traefik.http.services.studybuddy.loadbalancer.server.port=8501"
       # HTTPS with SSL
-      - "traefik.http.routers.studybuddy-secure.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
+      - "traefik.http.routers.studybuddy-secure.rule=Host(`quorra1.ita.chalmers.se`)"
       - "traefik.http.routers.studybuddy-secure.entrypoints=websecure"
       - "traefik.http.routers.studybuddy-secure.tls.certresolver=letsencrypt"
       # Redirect HTTP to HTTPS
