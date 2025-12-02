@@ -16,7 +16,7 @@ NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 # LiteLLM konfiguration
 LITELLM_API_KEY = os.getenv("LITELLM_API_KEY")
 LITELLM_BASE_URL = os.getenv("LITELLM_BASE_URL")
-LITELLM_MODEL = os.getenv("LITELLM_MODEL", "anthropic/claude-sonnet-4")
+LITELLM_MODEL = os.getenv("LITELLM_MODEL", "anthropix/claude-sonnet-4")
 
 # Canvas konfiguration
 CANVAS_TOKEN = os.getenv("CANVAS_TOKEN")
