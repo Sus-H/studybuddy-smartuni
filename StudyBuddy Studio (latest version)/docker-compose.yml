@@ -14,10 +14,10 @@ services:
       # Entrypoints
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      # Let's Encrypt (uncomment for SSL)
-      # - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
-      # - --certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL}
-      # - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+      # Let's Encrypt for SSL
+      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.email=onsu@chalmers.se
+      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
       # Logging
       - --log.level=INFO
       - --accesslog=true
@@ -59,13 +59,13 @@ services:
       - "traefik.http.routers.studybuddy.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
       - "traefik.http.routers.studybuddy.entrypoints=web"
       - "traefik.http.services.studybuddy.loadbalancer.server.port=8501"
-      # HTTPS (uncomment for SSL)
-      # - "traefik.http.routers.studybuddy-secure.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
-      # - "traefik.http.routers.studybuddy-secure.entrypoints=websecure"
-      # - "traefik.http.routers.studybuddy-secure.tls.certresolver=letsencrypt"
-      # Redirect HTTP to HTTPS (uncomment for SSL)
-      # - "traefik.http.routers.studybuddy.middlewares=redirect-to-https"
-      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # HTTPS with SSL
+      - "traefik.http.routers.studybuddy-secure.rule=Host(`quorra1.ita.chalmers.se`) || Host(`studybuddy.quorra1.ita.chalmers.se`)"
+      - "traefik.http.routers.studybuddy-secure.entrypoints=websecure"
+      - "traefik.http.routers.studybuddy-secure.tls.certresolver=letsencrypt"
+      # Redirect HTTP to HTTPS
+      - "traefik.http.routers.studybuddy.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
     networks:
       - traefik
     depends_on:
