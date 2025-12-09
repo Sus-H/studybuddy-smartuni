@@ -1,7 +1,7 @@
 services:
   studybuddy:
-    build: .
-    container_name: studybuddy-app
+    build: ./StudyBuddy Studio (latest version)
+    container_name: studybuddy-studio-app
     restart: unless-stopped
     environment:
       # Streamlit Configuration
@@ -19,8 +19,8 @@ services:
       # Optional: Other API keys
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     volumes:
-      - ./data:/app/data
-      - ./uploads:/app/uploads
+      - ./StudyBuddy Studio (latest version)/data:/app/data
+      - ./StudyBuddy Studio (latest version)/uploads:/app/uploads
     labels:
       - "traefik.enable=true"
       # HTTP
