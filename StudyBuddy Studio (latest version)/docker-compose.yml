@@ -1,43 +1,4 @@
-version: '3.8'
-
 services:
-  traefik:
-    image: traefik:v3.0
-    container_name: traefik
-    restart: unless-stopped
-    command:
-      # API and Dashboard
-      - --api.dashboard=true
-      - --api.insecure=true
-      # Docker provider
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.network=traefik
-      # Entrypoints
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      # Let's Encrypt for SSL
-      - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
-      - --certificatesresolvers.letsencrypt.acme.email=onsu@chalmers.se
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      # Logging
-      - --log.level=INFO
-      - --accesslog=true
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"  # Traefik dashboard
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt
-    networks:
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`traefik.quorra1.ita.chalmers.se`)"
-      - "traefik.http.routers.dashboard.entrypoints=web"
-      - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
-
   studybuddy:
     build: .
     container_name: studybuddy-app
@@ -63,11 +24,11 @@ services:
     labels:
       - "traefik.enable=true"
       # HTTP
-      - "traefik.http.routers.studybuddy.rule=Host(`quorra1.ita.chalmers.se`)"
+      - "traefik.http.routers.studybuddy.rule=Host(`mew.ita.chalmers.se`)"
       - "traefik.http.routers.studybuddy.entrypoints=web"
       - "traefik.http.services.studybuddy.loadbalancer.server.port=8501"
       # HTTPS with SSL
-      - "traefik.http.routers.studybuddy-secure.rule=Host(`quorra1.ita.chalmers.se`)"
+      - "traefik.http.routers.studybuddy-secure.rule=Host(`mew.ita.chalmers.se`)"
       - "traefik.http.routers.studybuddy-secure.entrypoints=websecure"
       - "traefik.http.routers.studybuddy-secure.tls.certresolver=letsencrypt"
       # Redirect HTTP to HTTPS
@@ -79,4 +40,4 @@ services:
 networks:
   traefik:
     name: traefik
-    external: false
+    external: true
